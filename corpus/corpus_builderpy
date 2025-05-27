@@ -1,0 +1,85 @@
+import os
+import json
+import tiktoken
+from pathlib import Path
+from git import Repo
+from github import Github
+
+# Settings
+GITHUB_TOKEN = "ghp_your_token_here"
+ORG_NAME = "visa"
+CLONE_DIR = "visa_repos"
+CORPUS_PATH = "rag_corpus.jsonl"
+MAX_TOKENS = 512
+
+# Initialize GitHub and tokenizer
+g = Github(GITHUB_TOKEN)
+enc = tiktoken.get_encoding("cl100k_base")
+
+def count_tokens(text):
+    return len(enc.encode(text))
+
+def classify_file(file_path):
+    ext = file_path.suffix
+    path_str = str(file_path).lower()
+    if "example" in path_str or ext in {".example", ".sample"}:
+        return "code_example"
+    elif ext in {".md", ".txt"} or "docs" in path_str:
+        return "documentation"
+    elif ext in {".json"} and "swagger" in path_str:
+        return "api_reference"
+    elif ext in {".jsx", ".tsx", ".vue"}:
+        return "component_snippet"
+    elif "config" in path_str or file_path.name in {"package.json", "vite.config.js"}:
+        return "config"
+    else:
+        return "function_snippet"
+
+def chunk_file(file_path):
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            text = f.read()
+    except Exception:
+        return []
+
+    tokens = enc.encode(text)
+    chunks = []
+    for i in range(0, len(tokens), MAX_TOKENS):
+        sub = enc.decode(tokens[i:i + MAX_TOKENS])
+        chunks.append(sub)
+    return chunks
+
+def build_corpus():
+    corpus = []
+    org = g.get_organization(ORG_NAME)
+    repos = org.get_repos()
+
+    Path(CLONE_DIR).mkdir(exist_ok=True)
+
+    for repo in repos[:5]:  # Limit to 5 for speed
+        repo_path = Path(CLONE_DIR) / repo.name
+        if not repo_path.exists():
+            print(f"Cloning {repo.name}...")
+            Repo.clone_from(repo.clone_url, str(repo_path))
+
+        for file_path in repo_path.rglob("*.*"):
+            if file_path.suffix in {".js", ".jsx", ".ts", ".tsx", ".md", ".json", ".txt"}:
+                file_type = classify_file(file_path)
+                chunks = chunk_file(file_path)
+                for i, chunk in enumerate(chunks):
+                    corpus.append({
+                        "repo": repo.name,
+                        "file": str(file_path.relative_to(repo_path)),
+                        "type": file_type,
+                        "chunk_index": i,
+                        "content": chunk,
+                        "token_count": count_tokens(chunk)
+                    })
+
+    with open(CORPUS_PATH, "w", encoding="utf-8") as f:
+        for item in corpus:
+            f.write(json.dumps(item) + "\n")
+    print(f"Corpus saved to {CORPUS_PATH} with {len(corpus)} chunks.")
+
+if __name__ == "__main__":
+    build_corpus()
