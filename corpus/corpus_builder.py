@@ -4,9 +4,17 @@ import tiktoken
 from pathlib import Path
 from git import Repo
 from github import Github
+from dotenv import load_dotenv
+
+# Load the .env file variables into environment variables
+load_dotenv()  
+
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+
+if not GITHUB_TOKEN:
+    raise ValueError("No GITHUB_TOKEN found. Please set it in your .env file.")
 
 # Settings
-GITHUB_TOKEN = "ghp_your_token_here"
 ORG_NAME = "visa"
 CLONE_DIR = "visa_repos"
 CORPUS_PATH = "rag_corpus.jsonl"
