@@ -5,10 +5,10 @@ from sentence_transformers import SentenceTransformer
 from chromadb import PersistentClient
 
 
-CORPUS_PATH = "rag_corpus.jsonl"
+CORPUS_PATH = os.path.join(os.path.dirname(__file__), "rag_corpus.jsonl")
 COLLECTION_NAME = "visa_code_corpus"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
-CHROMA_PERSIST_DIR = "./chroma_store"
+CHROMA_PERSIST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "rag-assistant", "chroma_store"))
 
 # Function to load and clean the corpus from a JSONL file
 def load_corpus(corpus_path):
@@ -96,5 +96,7 @@ def ingest_to_chromadb(corpus_path, collection_name, model_name, persist_dir):
         collection.add(ids=ids, documents=texts, embeddings=embeddings, metadatas=metadatas)
         total_docs += len(buffer)
         print(f"Ingested final {len(buffer)} docs (in {time.time() - batch_start:.2f}s)")
+    print(f"ChromaDB store should be at: {persist_dir}")
+    print(f"Total docs ingested: {total_docs}")
 if __name__ == "__main__":
     ingest_to_chromadb(CORPUS_PATH, COLLECTION_NAME, EMBEDDING_MODEL_NAME, CHROMA_PERSIST_DIR)
