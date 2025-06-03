@@ -1,0 +1,210 @@
+/* Set up full viewport height and background for the app */
+body, html, #root {
+  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: #f0f2f5;
+}
+
+/* Outer flex container for vertical centering */
+.app-outer {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: inherit;
+}
+
+/* General container for content (not used in main chat) */
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+}
+
+/* Input field styling (legacy, not used for chat input) */
+.input {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+/* Button styling (legacy, not used for chat button) */
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* Result and context containers (legacy, not used for chat bubbles) */
+.result, .context {
+  margin-top: 2rem;
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Styling for code/document snippets (legacy) */
+.doc-snippet {
+  background: #eee;
+  padding: 0.5rem;
+  white-space: pre-wrap;
+  margin-bottom: 1rem;
+}
+
+/* Main chat container styling */
+.chat-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Chat title styling */
+.chat-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Chat input (textarea) styling */
+.chat-input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  box-sizing: border-box;
+  margin-bottom: 0; /* Remove margin to align with button */
+}
+
+/* Chat button styling */
+.chat-button {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Chat response container (holds user and bot bubbles) */
+.chat-response {
+  margin-bottom: 1.5rem;
+  background: #23272f;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+/* Generic chat bubble styling */
+.chat-bubble {
+  background: #23272f;
+  color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  white-space: pre-wrap;
+}
+
+/* User chat bubble (darker background) */
+.chat-bubble.user {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+
+/* Bot chat bubble (slightly lighter background) */
+.chat-bubble.bot {
+  background: #374151;
+  color: #f1f8e9;
+}
+
+/* Sources container inside chat (dark background) */
+.chat-sources {
+  margin-top: 1.5rem;
+  background: #23272f;
+  border-radius: 10px;
+  padding: 1rem;
+  color: #f5f5f5;
+}
+
+/* Sources header styling */
+.chat-sources h2 {
+  text-align: center;
+  color: #f5f5f5;
+}
+
+/* Sources list styling */
+.chat-sources ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* Individual source link styling */
+.chat-sources li {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Input row: stack textarea and button vertically, align widths */
+.input-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Main page title styling */
+.main-title {
+  color: #111;
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  font-size: 2rem;
+  letter-spacing: 0.03em;
+}
+
+/* Page outer container for vertical layout */
+.page-outer {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: #f0f2f5;
+}
+
+/* Header container for centering the main title */
+.header-container {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+/* Center the chat container vertically and horizontally */
+.center-outer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -25,20 +25,19 @@ def load_corpus(corpus_path):
 
                 # Extract and clean metadata
                 meta = item.get("metadata", {})
-                doc_id = f"{meta.get('repo', 'unknown')}_{meta.get('file_path', 'unknown')}_{meta.get('chunk_index', 'unknown')}"
-
                 metadata = {
-                    "repo": meta.get("repo"),
-                    "file": meta.get("file_path"),
-                    "type": meta.get("type"),
+                    "source": meta.get("source"),
+                    "file_path": meta.get("file_path"),
                     "chunk_index": meta.get("chunk_index"),
                     "token_count": meta.get("token_count"),
-                    "language": meta.get("language"),
+                    "type": meta.get("type"),
+                    "tags": ", ".join(meta.get("tags", [])) if isinstance(meta.get("tags", []), list) else str(meta.get("tags", "")),
+                    "language": meta.get("language")
                 }
 
-                # Yield a cleaned document record
+                # Yield the document record with metadata as-is
                 yield {
-                    "id": item["id"],  # Original ID from JSON
+                    "id": item["id"],
                     "document": item["document"],
                     "metadata": metadata
                 }
@@ -46,6 +45,10 @@ def load_corpus(corpus_path):
             except json.JSONDecodeError:
                 # Catch and report JSON formatting errors
                 print(f"Invalid JSON on line {idx}: {line[:80]}")
+
+# Add this function to ingest_to_chromadb.py
+def clean_metadata(meta):
+    return {k: (v if v is not None else "") for k, v in meta.items()}
 
 # Function to embed documents and store them into a local ChromaDB
 def ingest_to_chromadb(corpus_path, collection_name, model_name, persist_dir):
@@ -75,7 +78,7 @@ def ingest_to_chromadb(corpus_path, collection_name, model_name, persist_dir):
             # Extract fields for ChromaDB
             ids = [doc["id"] for doc in buffer]
             texts = [doc["document"] for doc in buffer]
-            metadatas = [doc["metadata"] for doc in buffer]
+            metadatas = [clean_metadata(doc["metadata"]) for doc in buffer]
             embeddings = embedder.encode(texts, show_progress_bar=False).tolist()
 
             # Add the batch to the collection
@@ -90,7 +93,7 @@ def ingest_to_chromadb(corpus_path, collection_name, model_name, persist_dir):
         batch_start = time.time()
         ids = [doc["id"] for doc in buffer]
         texts = [doc["document"] for doc in buffer]
-        metadatas = [doc["metadata"] for doc in buffer]
+        metadatas = [clean_metadata(doc["metadata"]) for doc in buffer]
         embeddings = embedder.encode(texts, show_progress_bar=False).tolist()
 
         collection.add(ids=ids, documents=texts, embeddings=embeddings, metadatas=metadatas)
