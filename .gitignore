@@ -1,5 +1,4 @@
 .env
-chroma_store/
 visa_repos/
 rag_corpus.jsonl
 backend/__pycache__/
