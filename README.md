@@ -15,38 +15,29 @@ This project is a Retrieval-Augmented Generation (RAG) assistant for Visa's publ
 
 ## Prerequisites
 
-- Python 3.9+
+- Python 3.9+ (Python 3.12 is supported, but ensure all dependencies are compatible)
 - Node.js 18+
-- [GitHub Personal Access Token](https://github.com/settings/tokens) (for corpus building)
-- [Google Gemini API Key](https://aistudio.google.com/app/apikey) (for LLM answers)
+- [Google Gemini API Key](https://aistudio.google.com/app/apikey) (for LLM answers, reach out to deeyabodas1@gmail.com for key access)
+- [Git LFS](https://git-lfs.github.com/) (for downloading large files like the corpus and ChromaDB store)
 
 ---
 
-## 1. Clone the Repository
+## 1. Clone the Repository and Download Large Files
+
+First, make sure you have [Git LFS](https://git-lfs.github.com/) installed.
 
 ```bash
+git lfs install
 git clone https://github.com/your-username/rag-assistant.git
 cd rag-assistant
+git lfs pull
 ```
+
+This will download the large pre-built corpus file (e.g., `rag_corpus.jsonl`) and any other large files tracked by LFS (such as the ChromaDB store).
 
 ---
 
-## 2. Set Up Python Backend
-
-### a. Create a virtual environment
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### b. Install Python dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### c. Set up environment variables
+## 2. Set Up Environment Variables
 
 Create a `.env` file in the project root:
 
@@ -55,61 +46,67 @@ GITHUB_TOKEN=your_github_token_here
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
+> **Note:**  
+> You do **not** need to run any scripts in the `corpus/` directory (such as `corpus_builder.py` or `ingest_to_chromadb.py`).  
+> You do **not** need a github token unless you are re-ingesting your corpus, feel free to leave it blank.
+> The corpus and vector store are already built and included via Git LFS.
+
 ---
 
-## 3. Build the Corpus
+## 3. Install Dependencies and Run the App
 
-This will clone Visa's public GitHub repos and scrape Visa developer docs.
+A helper script is provided to automate setup and startup.
+
+### a. Run the setup script
 
 ```bash
-cd corpus
-python corpus_builder.py
+chmod +x setup_and_run.sh
+./setup_and_run.sh
 ```
 
----
+This script will:
+- Create and activate a Python virtual environment
+- Install all Python dependencies
+- Check for your `.env` file
+- Start the FastAPI backend (`uvicorn`)
+- Install frontend dependencies and start the React app
 
-## 4. Ingest the Corpus into ChromaDB
+### b. Manual steps (if you prefer)
 
+**Backend:**
 ```bash
-python ingest_to_chromadb.py
-```
-
----
-
-## 5. Start the Backend API
-
-```bash
-cd ../backend
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+cd backend
 uvicorn app:app --reload
 ```
 
-The backend will run at [http://localhost:8000](http://localhost:8000).
-
----
-
-## 6. Start the Frontend (React)
-
+**Frontend (in a new terminal):**
 ```bash
-cd ../frontend
+cd frontend
 npm install
 npm run dev
 ```
 
-The frontend will run at [http://localhost:5173](http://localhost:5173).
-
 ---
 
-## 7. Open the App
+## 4. Open the App
 
 Visit [http://localhost:5173](http://localhost:5173) in your browser.
+
+- The backend will run at [http://localhost:8000](http://localhost:8000).
+- The frontend will run at [http://localhost:5173](http://localhost:5173).
 
 ---
 
 ## Troubleshooting
 
-- **CORS errors**: Make sure the backend is running and CORS is enabled for `localhost:5173`.
-- **Missing tokens/keys**: Ensure your `.env` file is set up correctly.
-- **ChromaDB issues**: Delete the `chroma_store` directory and re-run ingestion if you encounter vector DB errors.
+- **CORS errors:** Make sure the backend is running and CORS is enabled for `localhost:5173` (already configured in `app.py`).
+- **Missing API key:** Ensure your `.env` file is set up correctly.
+- **ChromaDB/corpus issues:** The corpus and vector DB should already be included via LFS. If not, please contact the maintainer.
+- **Dependency errors:** If you see errors related to `protobuf`, `pyarrow`, or other packages, ensure you are using the provided `requirements.txt` and have `protobuf<=3.20.3` and `pyarrow>=14.0.0` installed.
 
 ---
 
@@ -117,18 +114,24 @@ Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
 ```
 rag-assistant/
-├── backend/           # FastAPI backend
-│   └── app.py
-├── corpus/            # Corpus builder and ingestion scripts
-│   ├── corpus_builder.py
-│   └── ingest_to_chromadb.py
-├── frontend/          # React frontend
-│   └── src/App.jsx
-├── chroma_store/      # ChromaDB persistent storage (created after ingestion)
-├── rag_corpus.jsonl   # Built corpus (created after running corpus_builder.py)
-├── requirements.txt
-└── .env
+├── backend/           # FastAPI backend (app.py)
+├── corpus/            # Corpus builder and ingestion scripts (ignore for normal use)
+├── frontend/          # React frontend (src/App.jsx)
+├── chroma_store/      # ChromaDB persistent storage (included via LFS)
+├── rag_corpus.jsonl   # Built corpus (included via LFS)
+├── requirements.txt   # Python dependencies
+├── setup_and_run.sh   # Quickstart script
+├── .env               # Your API key (not tracked by git)
+└── .gitignore         # Ignores venv, .env, and large files
 ```
+
+---
+
+## Notes for Developers
+
+- **Virtual environments** are ignored by `.gitignore` (`venv/`, `.env/`, `.venv/`, `env/`, `ENV/`).
+- **Do not commit your `.env` file or API keys.**
+- **Corpus and ChromaDB store** are tracked with Git LFS and should not be rebuilt unless you are developing the corpus pipeline.
 
 ---
 

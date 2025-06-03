@@ -80,14 +80,6 @@ async def ask_rag(request: QueryRequest):
                 "source": source
             })
 
-        # Log all sources for debugging
-        sources = [section["source"] for section in context_sections]
-        print(f"ASK ENDPOINT: Returning {len(context_sections)} context sections.")
-        print(f"ASK ENDPOINT: Returning content: {context_sections}")
-        print("ASK ENDPOINT: Sources returned to frontend:")
-        for idx, src in enumerate(sources):
-            print(f"  Source {idx+1}: {src}")
-
         # Build context string for Gemini prompt
         context_str = "\n---\n".join(
             f"{section['text']}\nSource: {section['source']}" if section['source'] else section['text']
