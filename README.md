@@ -57,11 +57,23 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 A helper script is provided to automate setup and startup.
 
-### a. Run the setup script
+### a. For macOS/Linux users
+
+Run the setup script:
 
 ```bash
 chmod +x setup_and_run.sh
 ./setup_and_run.sh
+```
+
+### b. For Windows users
+
+Run the PowerShell setup script:
+
+```powershell
+# In PowerShell, from the project root:
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\setup_and_run.ps1
 ```
 
 This script will:
@@ -71,7 +83,7 @@ This script will:
 - Start the FastAPI backend (`uvicorn`)
 - Install frontend dependencies and start the React app
 
-### b. Manual steps (if you prefer)
+### c. Manual steps (if you prefer)
 
 **Backend:**
 ```bash
@@ -105,7 +117,7 @@ Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
 - **CORS errors:** Make sure the backend is running and CORS is enabled for `localhost:5173` (already configured in `app.py`).
 - **Missing API key:** Ensure your `.env` file is set up correctly.
-- **ChromaDB/corpus issues:** The corpus and vector DB should already be included via LFS. If not, please contact the maintainer.
+- **ChromaDB/corpus issues:** The corpus and vector DB should already be included via LFS. If not, please contact deeyabodas1@gmail.com.
 - **Dependency errors:** If you see errors related to `protobuf`, `pyarrow`, or other packages, ensure you are using the provided `requirements.txt` and have `protobuf<=3.20.3` and `pyarrow>=14.0.0` installed.
 
 ---
@@ -120,7 +132,8 @@ rag-assistant/
 ├── chroma_store/      # ChromaDB persistent storage (included via LFS)
 ├── rag_corpus.jsonl   # Built corpus (included via LFS)
 ├── requirements.txt   # Python dependencies
-├── setup_and_run.sh   # Quickstart script
+├── setup_and_run.sh   # Quickstart script (macOS/Linux)
+├── setup_and_run.ps1  # Quickstart script (Windows/PowerShell)
 ├── .env               # Your API key (not tracked by git)
 └── .gitignore         # Ignores venv, .env, and large files
 ```
@@ -130,7 +143,6 @@ rag-assistant/
 ## Notes for Developers
 
 - **Virtual environments** are ignored by `.gitignore` (`venv/`, `.env/`, `.venv/`, `env/`, `ENV/`).
-- **Do not commit your `.env` file or API keys.**
 - **Corpus and ChromaDB store** are tracked with Git LFS and should not be rebuilt unless you are developing the corpus pipeline.
 
 ---
