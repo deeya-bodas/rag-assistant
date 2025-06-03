@@ -3,3 +3,10 @@ visa_repos/
 rag_corpus.jsonl
 backend/__pycache__/
 .DS_Store
+
+# Ignore Python virtual environments
+venv/
+.env/
+.venv/
+ENV/
+env/
