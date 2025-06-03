@@ -49,7 +49,6 @@ function App() {
       {/* Centered chat UI container */}
       <div className="center-outer">
         <div className="chat-container">
-          <h2 className="chat-title">Visa RAG Assistant</h2>
           {/* Input row: textarea for query and Ask button */}
           <div className="input-row">
             <textarea
